@@ -7,21 +7,27 @@ int preprocess(const char *file_name) {
     std::fstream src (file_name, std::ios::in);
     std::fstream out ("./preprocess_output", std::ios::out);
     std::string buf;
-    unsigned int line_num = 1;
+    unsigned int comment_err_start_line_num = 0, line_num = 0;
     bool is_comment = false;
     while (1) {
+        line_num++;
         getline(src, buf);
-        preprocess_line(buf, out, is_comment);
+        preprocess_line(buf, out, is_comment, line_num, comment_err_start_line_num);
         if (src.eof()) {
             src.close();
             out.close();
             break;
         }
     }
+    if (is_comment) {
+        std::cerr << "\033[1m" << "line "<< comment_err_start_line_num << 
+            ": \033[31merror: \033[0munterminated comment" << std::endl;
+        return 1;
+    }
     return 0;
 }
 
-int preprocess_line(std::string &buf, std::fstream &out, bool &is_comment) {
+int preprocess_line(std::string &buf, std::fstream &out, bool &is_comment, const unsigned int line_num, unsigned int &err_st_line) {
     preprocess_mode mode = is_comment ? comment : uncomment;
     bool end_line_comment = false;
     for (auto ch: buf) {
@@ -40,6 +46,7 @@ int preprocess_line(std::string &buf, std::fstream &out, bool &is_comment) {
                 out << ' ' << ' ';
                 mode = comment;
                 is_comment = true;
+                err_st_line = line_num;
             } else if (ch == '/'){
                 end_line_comment = true;
             } else {

@@ -38,7 +38,27 @@ void SignRecognized(SignType signtype) {
     // TODO
 }
 
-void rec_one_char(char ch) {
+void NumberRecognized() {
+    // TODO
+}
+
+void DoubleRecognized() {
+    // TODO
+}
+
+void StringRecognized() {
+    // TODO
+}
+
+void SignRecognized(SignType sightype) {
+    // TODO
+}
+
+void RelopRecognized(RelopType reloptype) {
+    // TODO
+}
+
+int rec_one_char(char ch) {
     switch (state)
     {
     case Start:
@@ -81,8 +101,111 @@ void rec_one_char(char ch) {
         }
         break;
     
-    // TODO: Other Cases
+    case Number:
+        if (char_isNumber(ch)) {
+            bpush(ch);
+        } else if (ch == '.') {
+            state = Double;
+            bpush(ch);
+        } else {
+            NumberRecognized();
+            state = Start;
+            return 1;
+        }
+        break;
+
+    case Double:
+        if (char_isNumber(ch)) {
+            bpush(ch);
+        } else {
+            DoubleRecognized();
+            state = Start;
+            return 1;
+        }
+        break;
+
+    case String:
+        if (char_isNumber(ch) || char_isLetter(ch)) {
+            bpush(ch);
+        } else {
+            StringRecognized();
+            state = Start;
+            return 1;
+        }
+    
+    case bitOr:
+        state = Start;
+        if (ch == '|') {
+            SignRecognized(s_Or);
+        } else {
+            SignRecognized(s_bitOr);
+            return 1;
+        }
+
+    case bitAnd:
+        state = Start;
+        if (ch == '&') {
+            SignRecognized(s_And);
+        } else {
+            SignRecognized(s_bitOr);
+            return 1;
+        }
+
+    case Assign:
+        state = Start;
+        if (ch == '=') {
+            RelopRecognized(r_Eq);
+        } else {
+            RelopRecognized(r_Assign);
+            return 1;
+        }
+    
+    case Neg:
+        state = Start;
+        if (ch == '=') {
+            RelopRecognized(r_Neq);
+        } else {
+            SignRecognized(s_bitNeg); // Special
+            return 1;
+        }
+
+    case Less:
+        state = Start;
+        if (ch == '=') {
+            RelopRecognized(r_Leq);
+        } else if (ch == '<') {
+            SignRecognized(s_LeftShift);
+        } else {
+            RelopRecognized(r_Lt);
+            return 1;
+        }
+    
+    case Greater:
+        state = Start;
+        if (ch == '=') {
+            RelopRecognized(r_Geq);
+        } else if (ch == '>') {
+            SignRecognized(s_RightShift);
+        } else {
+            RelopRecognized(r_Gt);
+            return 1;
+        }
+
+    case Dot:
+        if (char_isNumber(ch)) {
+            state = Double;
+            bpush('0');
+            bpush('.');
+            bpush(ch);
+        } else {
+            state = Start;
+            SignRecognized(s_Dot);
+            return 1;
+        }
+        
     default:
         break;
     }
+
+    return 0;
 }

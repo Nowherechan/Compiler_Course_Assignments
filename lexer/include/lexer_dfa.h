@@ -7,10 +7,10 @@ enum DfaState {
     bitOr,
     bitAnd,
     Assign,
-    Dot,
     Neg,
     Less,
-    Greater
+    Greater,
+    Dot
     // TODO: Trivially classified
 };
 
@@ -25,7 +25,10 @@ enum SignType {
     s_Or,
     s_bitOr,
     s_Xor,
-    s_Neg,
+    s_bitNeg,
+    s_LeftShift,
+    s_RightShift,
+    s_Dot,
     s_LeftParen,
     s_RightParen,
     s_LeftSqBracket,

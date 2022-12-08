@@ -19,14 +19,14 @@ static std::map<char, SignType> SigleSignTable = {
     {',', s_Comma}, {';', s_Semicolon}
 };
 static std::map<char, RelopType> RelopTable;
-static std::map<SignType, Token::TokenType> SignToTokenTable = {
+static std::map<enum SignType, enum Token::TokenType> SignToTokenTable = {
     {s_Add, Token::Plus}, {s_Minus, Token::Minus}, {s_Star, Token::Star}, {s_Slash, Token::Slash},
     {s_Mod, Token::Mod}, 
     {s_And, Token::And}, {s_bitAnd, Token::BitAnd}, {s_Or, Token::Or}, {s_bitOr, Token::BitOr},
     {s_Xor, Token::Xor}, {s_bitNeg, Token::Neg}, {s_LeftShift, Token::LeftShift}, {s_RightShift, Token::RightShift},
     {s_LeftParen, Token::LeftParen}, {s_RightParen, Token::RightParen},
     {s_LeftSqBracket, Token::LeftSqBracket}, {s_RightSqBracket, Token::RightSqBracket},
-    {s_LeftBrace, Token::LeftBrace}, {s_RightBrace, Token::RightBrace}
+    {s_LeftBrace, Token::LeftBrace}, {s_RightBrace, Token::RightBrace}, {s_Comma, Token::Comma}, {s_Semicolon, Token::Semicolon}
 };
 static std::map<RelopType, Token::RelopType> RelopToTokenRelopType = {
     {r_Assign, Token::Assign}, 
@@ -47,12 +47,13 @@ static std::map<std::string, unsigned int> IdTable;
 static unsigned int IdTable_Cnt = 0;
 
 int bpush(char ch) {
-    if (buffer_end_idx = BUFFER_SIZE) {
+    if (buffer_end_idx == BUFFER_SIZE) {
         return 1;
     }
 
     buffer[buffer_end_idx] = ch;
     buffer_end_idx++;
+    return 0;
 }
 
 void idtable_push(std::string str) {
@@ -85,7 +86,7 @@ void NumberRecognized() {
     int value = std::stoi(buffer, nullptr, 0);
     std::pair<unsigned int, unsigned int> position = get_position();
     Token::IntConstToken *new_int_token = new Token::IntConstToken(position.first, position.second, value);
-    Token::Token *new_token = new_int_token;
+    Token::Token *new_token = (Token::Token*)new_int_token;
     token_list.push_back(new_token);
 
     buffer_end_idx = 0;
@@ -96,7 +97,7 @@ void DoubleRecognized() {
     double value = strtod(buffer, nullptr);
     std::pair<unsigned int, unsigned int> position = get_position();
     Token::DoubleConstToken *new_double_token = new Token::DoubleConstToken(position.first, position.second, value);
-    Token::Token *new_token = new_double_token;
+    Token::Token *new_token = (Token::Token*)new_double_token;
     token_list.push_back(new_token);
 
     buffer_end_idx = 0;
@@ -117,20 +118,20 @@ void StringRecognized() {
 
         Token::QualifierType qualifier_type = QualifierTable[str];
         Token::QualifierToken* new_qualifier_token = new Token::QualifierToken(position.first, position.second, qualifier_type);
-        new_token = new_qualifier_token;
+        new_token = (Token::Token*)new_qualifier_token;
 
     } else if (IdTable.find(str) != IdTable.end()) {
 
         unsigned int id = IdTable[str];
         Token::IdToken* new_id_token = new Token::IdToken(position.first, position.second, id);
-        new_token = new_id_token;
+        new_token = (Token::Token*)new_id_token;
 
     } else {
 
         idtable_push(str);
         unsigned int id = IdTable[str];
         Token::IdToken* new_id_token = new Token::IdToken(position.first, position.second, id);
-        new_token = new_id_token;
+        new_token = (Token::Token*)new_id_token;
 
     }
 
@@ -150,7 +151,7 @@ void RelopRecognized(RelopType reloptype) {
     Token::RelopType _reloptype = RelopToTokenRelopType[reloptype];
     std::pair<unsigned int, unsigned int> position = get_position();
     Token::RelopToken *new_relop_token = new Token::RelopToken(position.first, position.second, _reloptype);
-    Token::Token *new_token = new_relop_token;
+    Token::Token *new_token = (Token::Token*)new_relop_token;
     token_list.push_back(new_token);
 }
 
@@ -228,6 +229,7 @@ int rec_one_char(char ch) {
             state = Start;
             return 1;
         }
+        break;
     
     case bitOr:
         state = Start;
@@ -237,6 +239,7 @@ int rec_one_char(char ch) {
             SignRecognized(s_bitOr);
             return 1;
         }
+        break;
 
     case bitAnd:
         state = Start;
@@ -246,6 +249,7 @@ int rec_one_char(char ch) {
             SignRecognized(s_bitOr);
             return 1;
         }
+        break;
 
     case Assign:
         state = Start;
@@ -255,6 +259,7 @@ int rec_one_char(char ch) {
             RelopRecognized(r_Assign);
             return 1;
         }
+        break;
     
     case Neg:
         state = Start;
@@ -264,6 +269,7 @@ int rec_one_char(char ch) {
             SignRecognized(s_bitNeg); // Special
             return 1;
         }
+        break;
 
     case Less:
         state = Start;
@@ -275,6 +281,7 @@ int rec_one_char(char ch) {
             RelopRecognized(r_Lt);
             return 1;
         }
+        break;
     
     case Greater:
         state = Start;
@@ -286,6 +293,7 @@ int rec_one_char(char ch) {
             RelopRecognized(r_Gt);
             return 1;
         }
+        break;
 
     case Dot:
         if (char_isNumber(ch)) {
@@ -298,6 +306,7 @@ int rec_one_char(char ch) {
             SignRecognized(s_Dot);
             return 1;
         }
+        break;
 
     default:
         break;

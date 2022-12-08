@@ -1,3 +1,9 @@
+#include <vector>
+#include "Token.h"
+
+#ifndef LEXER_DFA_H
+#define LEXER_DFA_H
+
 enum DfaState {
     Start,
 
@@ -51,4 +57,8 @@ enum RelopType {
 
 const unsigned int BUFFER_SIZE = 1024;
 
+std::vector<Token::Token*> &get_tokenlist_ref();
+
 int rec_one_char(char ch);
+
+#endif

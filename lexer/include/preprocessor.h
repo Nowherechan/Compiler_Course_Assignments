@@ -1,5 +1,9 @@
 #include <fstream>
 #include <string.h>
+#include "showtokens.h"
+
+#ifndef PREPROCESSOR_H
+#define PREPROCESSOR_h
 
 int preprocess(const char *file_name);
 
@@ -11,3 +15,5 @@ enum preprocess_mode {
     comment,
     com_star
 };
+
+#endif

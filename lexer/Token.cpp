@@ -7,6 +7,10 @@ Token::Token::Token(unsigned int lin, unsigned int col, TokenType tokentype):
 
 }
 
+Token::TokenType Token::Token::getType() {
+    return this->token_type;
+}
+
 Token::Token::~Token()
 {
 }

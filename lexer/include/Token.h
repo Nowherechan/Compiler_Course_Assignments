@@ -1,7 +1,8 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+
 namespace Token
 {
-    
-
 
 enum TokenType {
 
@@ -69,6 +70,7 @@ private:
     unsigned int column;
 public:
     Token(unsigned int lin, unsigned int col, TokenType tokentype);
+    TokenType getType();
     ~Token();
 };
 
@@ -113,3 +115,5 @@ public:
 };
 
 } // End Namespace Token
+
+#endif

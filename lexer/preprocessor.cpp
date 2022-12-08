@@ -39,15 +39,18 @@ int preprocess_line(std::string &buf, std::fstream &out, bool &is_comment, const
                 mode = unc_slash;
             } else {
                 out << ch;
-                rec_one_char(ch); // TODO
+                if (rec_one_char(ch))
+                    rec_one_char(ch); // TODO
             }
             break;
         
         case unc_slash:
             if (ch == '*') {
                 out << ' ' << ' ';
-                rec_one_char(' ');
-                rec_one_char(' '); // TODO
+                if (rec_one_char(' '))
+                    rec_one_char(' ');
+                if (rec_one_char(' '))
+                    rec_one_char(' '); // TODO
                 mode = comment;
                 is_comment = true;
                 err_st_line = line_num;
@@ -55,8 +58,10 @@ int preprocess_line(std::string &buf, std::fstream &out, bool &is_comment, const
                 end_line_comment = true;
             } else {
                 out << '/' << ch;
-                rec_one_char('/');
-                rec_one_char(ch);  // TODO
+                if (rec_one_char('/'))
+                    rec_one_char('/'); 
+                if (rec_one_char(ch))
+                    rec_one_char(ch); // TODO
                 mode = uncomment;
             }
             break;
@@ -66,14 +71,17 @@ int preprocess_line(std::string &buf, std::fstream &out, bool &is_comment, const
                 mode = com_star;
             } else {
                 out << ' ';
-                rec_one_char(' '); //TODO
+                if (rec_one_char(' '))
+                    rec_one_char(' '); // TODO
             }
             break;
         
         case com_star:
             out << ' ' << ' ';
-            rec_one_char(' ');
-            rec_one_char(' '); // TODO
+            if (rec_one_char(' '))
+                rec_one_char(' ');
+            if (rec_one_char(' '))
+                rec_one_char(' '); // TODO
             if (ch =='/') {
                 mode = uncomment;
                 is_comment = false;
@@ -93,6 +101,7 @@ int preprocess_line(std::string &buf, std::fstream &out, bool &is_comment, const
         }
     }
     out << '\n';
-    rec_one_char('\n');
+    if (rec_one_char('\n'))
+        rec_one_char('\n'); // TODO
     return 0;
 }

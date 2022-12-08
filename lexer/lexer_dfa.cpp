@@ -246,7 +246,7 @@ int rec_one_char(char ch) {
         if (ch == '&') {
             SignRecognized(s_And);
         } else {
-            SignRecognized(s_bitOr);
+            SignRecognized(s_bitAnd);
             return 1;
         }
         break;

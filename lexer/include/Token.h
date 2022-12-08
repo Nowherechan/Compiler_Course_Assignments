@@ -10,7 +10,6 @@ enum TokenType {
     
     Return,
     For,
-    Return,
     Break,
     If,
     Else,

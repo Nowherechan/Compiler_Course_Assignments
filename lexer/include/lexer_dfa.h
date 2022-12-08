@@ -11,7 +11,6 @@ enum DfaState {
     Less,
     Greater,
     Dot
-    // TODO: Trivially classified
 };
 
 enum SignType {
@@ -51,3 +50,5 @@ enum RelopType {
 
 
 const unsigned int BUFFER_SIZE = 1024;
+
+int rec_one_char(char ch);

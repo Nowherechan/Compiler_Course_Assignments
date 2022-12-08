@@ -1,6 +1,7 @@
-#include <string.h>
+#include <string>
 #include <map>
 #include <vector>
+#include <cstdlib>
 #include "lexer_dfa.h"
 #include "Token.h"
 
@@ -33,6 +34,17 @@ static std::map<RelopType, Token::RelopType> RelopToTokenRelopType = {
     {r_Lt, Token::Lt}, {r_Gt, Token::Gt},
     {r_Leq, Token::Leq}, {r_Geq, Token::Geq}  
 };
+static std::map<std::string, Token::TokenType> KeyWordTable = {
+    {"return", Token::Return}, {"for", Token::For},
+    {"break", Token::Break}, {"if", Token::If},
+    {"else", Token::Else}, {"while", Token::Else},
+    {"while", Token::While}, {"continue", Token::Continue}
+};
+static std::map<std::string, Token::QualifierType> QualifierTable = {
+    {"int", Token::Int}, {"double", Token::Double}, {"void", Token::Void}
+};
+static std::map<std::string, unsigned int> IdTable;
+static unsigned int IdTable_Cnt = 0;
 
 int bpush(char ch) {
     if (buffer_end_idx = BUFFER_SIZE) {
@@ -41,6 +53,12 @@ int bpush(char ch) {
 
     buffer[buffer_end_idx] = ch;
     buffer_end_idx++;
+}
+
+void idtable_push(std::string str) {
+    IdTable[str] = IdTable_Cnt;
+    IdTable_Cnt++;
+    // TODO
 }
 
 inline bool char_isNumber(char ch) {
@@ -53,19 +71,72 @@ inline bool char_isLetter(char ch) {
 }
 
 std::pair<unsigned int, unsigned int> get_position() {
+    return {0, 0};
     // TODO: first - line, second - col
 }
 
+std::vector<Token::Token*> &get_tokenlist_ref() {
+    std::vector<Token::Token*> &ref = token_list;
+    return ref;
+}
+
 void NumberRecognized() {
-    // TODO
+    bpush('\0');
+    int value = std::stoi(buffer, nullptr, 0);
+    std::pair<unsigned int, unsigned int> position = get_position();
+    Token::IntConstToken *new_int_token = new Token::IntConstToken(position.first, position.second, value);
+    Token::Token *new_token = new_int_token;
+    token_list.push_back(new_token);
+
+    buffer_end_idx = 0;
 }
 
 void DoubleRecognized() {
-    // TODO
+    bpush('\0');
+    double value = strtod(buffer, nullptr);
+    std::pair<unsigned int, unsigned int> position = get_position();
+    Token::DoubleConstToken *new_double_token = new Token::DoubleConstToken(position.first, position.second, value);
+    Token::Token *new_token = new_double_token;
+    token_list.push_back(new_token);
+
+    buffer_end_idx = 0;
 }
 
 void StringRecognized() {
-    // TODO
+    bpush('\0');
+    std::string str = buffer;
+    std::pair<unsigned int, unsigned int> position = get_position();
+    Token::Token* new_token;
+
+    if (KeyWordTable.find(str) != KeyWordTable.end()) {
+
+        Token::TokenType tokentype = KeyWordTable[str];
+        new_token = new Token::Token(position.first, position.second, tokentype);
+
+    } else if (QualifierTable.find(str) != QualifierTable.end()) {
+
+        Token::QualifierType qualifier_type = QualifierTable[str];
+        Token::QualifierToken* new_qualifier_token = new Token::QualifierToken(position.first, position.second, qualifier_type);
+        new_token = new_qualifier_token;
+
+    } else if (IdTable.find(str) != IdTable.end()) {
+
+        unsigned int id = IdTable[str];
+        Token::IdToken* new_id_token = new Token::IdToken(position.first, position.second, id);
+        new_token = new_id_token;
+
+    } else {
+
+        idtable_push(str);
+        unsigned int id = IdTable[str];
+        Token::IdToken* new_id_token = new Token::IdToken(position.first, position.second, id);
+        new_token = new_id_token;
+
+    }
+
+    token_list.push_back(new_token);
+
+    buffer_end_idx = 0;
 }
 
 void SignRecognized(SignType signtype) {

@@ -1,11 +1,14 @@
 #include <string.h>
 #include <map>
+#include <vector>
 #include "lexer_dfa.h"
+#include "Token.h"
 
 
 static DfaState state = Start;
 static char buffer[BUFFER_SIZE];
 static unsigned int buffer_end_idx=0;
+static std::vector<Token::Token*> token_list;
 static std::map<char, SignType> SigleSignTable = {
     {'+', s_Add}, {'-', s_Minus}, {'*', s_Star}, {'/', s_Slash}, 
     {'%', s_Mod}, {'^', s_Xor},
@@ -15,6 +18,21 @@ static std::map<char, SignType> SigleSignTable = {
     {',', s_Comma}, {';', s_Semicolon}
 };
 static std::map<char, RelopType> RelopTable;
+static std::map<SignType, Token::TokenType> SignToTokenTable = {
+    {s_Add, Token::Plus}, {s_Minus, Token::Minus}, {s_Star, Token::Star}, {s_Slash, Token::Slash},
+    {s_Mod, Token::Mod}, 
+    {s_And, Token::And}, {s_bitAnd, Token::BitAnd}, {s_Or, Token::Or}, {s_bitOr, Token::BitOr},
+    {s_Xor, Token::Xor}, {s_bitNeg, Token::Neg}, {s_LeftShift, Token::LeftShift}, {s_RightShift, Token::RightShift},
+    {s_LeftParen, Token::LeftParen}, {s_RightParen, Token::RightParen},
+    {s_LeftSqBracket, Token::LeftSqBracket}, {s_RightSqBracket, Token::RightSqBracket},
+    {s_LeftBrace, Token::LeftBrace}, {s_RightBrace, Token::RightBrace}
+};
+static std::map<RelopType, Token::RelopType> RelopToTokenRelopType = {
+    {r_Assign, Token::Assign}, 
+    {r_Eq, Token::Eq}, {r_Neq, Token::Neq},
+    {r_Lt, Token::Lt}, {r_Gt, Token::Gt},
+    {r_Leq, Token::Leq}, {r_Geq, Token::Geq}  
+};
 
 int bpush(char ch) {
     if (buffer_end_idx = BUFFER_SIZE) {
@@ -34,8 +52,8 @@ inline bool char_isLetter(char ch) {
     return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch == '_');
 }
 
-void SignRecognized(SignType signtype) {
-    // TODO
+std::pair<unsigned int, unsigned int> get_position() {
+    // TODO: first - line, second - col
 }
 
 void NumberRecognized() {
@@ -50,12 +68,19 @@ void StringRecognized() {
     // TODO
 }
 
-void SignRecognized(SignType sightype) {
-    // TODO
+void SignRecognized(SignType signtype) {
+    Token::TokenType tokentype = SignToTokenTable[signtype];
+    std::pair<unsigned int, unsigned int> position = get_position();
+    Token::Token *new_token = new Token::Token(position.first, position.second, tokentype);
+    token_list.push_back(new_token);
 }
 
 void RelopRecognized(RelopType reloptype) {
-    // TODO
+    Token::RelopType _reloptype = RelopToTokenRelopType[reloptype];
+    std::pair<unsigned int, unsigned int> position = get_position();
+    Token::RelopToken *new_relop_token = new Token::RelopToken(position.first, position.second, _reloptype);
+    Token::Token *new_token = new_relop_token;
+    token_list.push_back(new_token);
 }
 
 int rec_one_char(char ch) {
@@ -202,7 +227,7 @@ int rec_one_char(char ch) {
             SignRecognized(s_Dot);
             return 1;
         }
-        
+
     default:
         break;
     }

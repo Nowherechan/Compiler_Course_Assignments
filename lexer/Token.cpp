@@ -1,62 +1,62 @@
 #include "Token.h"
 
-Token::Token(unsigned int li, unsigned int col, TokenType tokentype): 
-    line(li), 
+Token::Token::Token(unsigned int lin, unsigned int col, TokenType tokentype): 
+    line(lin), 
     column(col), 
     token_type(tokentype) {
 
 }
 
-Token::~Token()
+Token::Token::~Token()
 {
 }
 
-QualifierToken::QualifierToken(unsigned int lin, unsigned int col, QualifierType qualifiertype):
+Token::QualifierToken::QualifierToken(unsigned int lin, unsigned int col, QualifierType qualifiertype):
     Token(lin, col, Qualifier),
     qualifier_type(qualifiertype) {
     
 }
 
-QualifierType QualifierToken::getQualifierType() {
+Token::QualifierType Token::QualifierToken::getQualifierType() {
     return this->qualifier_type;
 }
 
-RelopToken::RelopToken(unsigned int lin, unsigned int col, RelopType reloptype):
+Token::RelopToken::RelopToken(unsigned int lin, unsigned int col, RelopType reloptype):
     Token(lin, col, Relop),
     relop_type(reloptype) {
 
 }
 
-RelopType RelopToken::getRelopType() {
+Token::RelopType Token::RelopToken::getRelopType() {
     return this->relop_type;
 }
 
-IdToken::IdToken(unsigned int lin, unsigned int col, unsigned int _id):
+Token::IdToken::IdToken(unsigned int lin, unsigned int col, unsigned int _id):
     Token(lin, col, Id),
     id(_id) {
 
 }
 
-unsigned int IdToken::getId() {
+unsigned int Token::IdToken::getId() {
     return this->id;
 }
 
-IntConstToken::IntConstToken(unsigned int lin, unsigned int col, int val):
+Token::IntConstToken::IntConstToken(unsigned int lin, unsigned int col, int val):
     Token(lin, col, IntegerConstant),
     value(val) {
 
 }
 
-int IntConstToken::getValue() {
+int Token::IntConstToken::getValue() {
     return this->value;
 }
 
-DoubleConstToken::DoubleConstToken(unsigned int lin, unsigned int col, double val):
+Token::DoubleConstToken::DoubleConstToken(unsigned int lin, unsigned int col, double val):
     Token(lin, col, DoubleConstant),
     value(val) {
 
 }
 
-double DoubleConstToken::getValue() {
+double Token::DoubleConstToken::getValue() {
     return this->value;
 }

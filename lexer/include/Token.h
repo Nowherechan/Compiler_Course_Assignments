@@ -1,3 +1,8 @@
+namespace Token
+{
+    
+
+
 enum TokenType {
 
     Qualifier,
@@ -64,11 +69,11 @@ private:
     unsigned int line;
     unsigned int column;
 public:
-    Token(unsigned int li, unsigned int col, TokenType tokentype);
+    Token(unsigned int lin, unsigned int col, TokenType tokentype);
     ~Token();
 };
 
-class QualifierToken: Token {
+class QualifierToken: public Token {
 private:
     QualifierType qualifier_type;
 public:
@@ -76,7 +81,7 @@ public:
     QualifierToken(unsigned int lin, unsigned int col, QualifierType qualifiertype);
 };
 
-class RelopToken: Token {
+class RelopToken: public Token {
 private:
     RelopType relop_type;
 public:
@@ -84,7 +89,7 @@ public:
     RelopToken(unsigned int lin, unsigned int col, RelopType reloptype);
 };
 
-class IdToken: Token {
+class IdToken: public Token {
 private:
     unsigned int id;
 public:
@@ -92,7 +97,7 @@ public:
     IdToken(unsigned int lin, unsigned int col, unsigned int _id);
 };
 
-class IntConstToken: Token {
+class IntConstToken: public Token {
 private:
     int value;
 public:
@@ -100,10 +105,12 @@ public:
     IntConstToken(unsigned int lin, unsigned int col, int val);
 };
 
-class DoubleConstToken: Token {
+class DoubleConstToken: public Token {
 private:
     double value;
 public:
     double getValue();
     DoubleConstToken(unsigned int lin, unsigned int col, double val);
 };
+
+} // End Namespace Token

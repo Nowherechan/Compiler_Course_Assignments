@@ -39,7 +39,7 @@ while_stmt ::= While "(" expression ")" codeblock
 
 ### Function Define Statement
 ```ebnf
-funcdef_stmt ::= Qualifier Identifier "(" arg_list ")" codeblock
+funcdef_stmt ::= Qualifier Identifier "(" {arg_list} ")" codeblock
 arg_list ::= Qualifier Identifier {, arg_list}
 ```
 

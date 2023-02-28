@@ -432,3 +432,162 @@ int atom(TokenPtrV &v, int idx) {
 }
 
 // Calculate
+int expression(TokenPtrV &v, int idx) {
+    return or_exp(v, idx);
+}
+
+int or_exp(TokenPtrV &v, int idx) {
+
+    int ret = and_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || v[ret]->getType() != Token::Or) {
+        return ret;
+    }
+
+    ret++;
+
+    return or_exp(v, ret);
+}
+
+int and_exp(TokenPtrV &v, int idx) {
+
+    int ret = neg_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || v[ret]->getType() != Token::And) {
+        return ret;
+    }
+
+    ret++;
+
+    return and_exp(v, ret);
+}
+
+int neg_exp(TokenPtrV &v, int idx) {
+
+    if (v.size() <= idx) {
+        return -1;
+    }
+
+    int ret = idx;
+    if (v[idx]->getType() == Token::Neg) {
+        return neg_exp(v, ret+1);
+    }
+
+    return relop_exp(v, ret+1);
+}
+
+int relop_exp(TokenPtrV &v, int idx) {
+
+    int ret = bitor_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || v[ret]->getType() != Token::Relop) {
+        return ret;
+    }
+
+    ret++;
+
+    return relop_exp(v, ret);
+}
+
+int bitor_exp(TokenPtrV &v, int idx) {
+
+    int ret = bitxor_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || v[ret]->getType() != Token::BitOr) {
+        return ret;
+    }
+
+    ret++;
+
+    return bitor_exp(v, ret);
+}
+
+int bitxor_exp(TokenPtrV &v, int idx) {
+
+    int ret = bitand_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || v[ret]->getType() != Token::Xor) {
+        return ret;
+    }
+
+    ret++;
+
+    return bitxor_exp(v, ret);
+}
+
+int bitand_exp(TokenPtrV &v, int idx) {
+
+    int ret = bitsft_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || v[ret]->getType() != Token::BitAnd) {
+        return ret;
+    }
+
+    ret++;
+
+    return bitand_exp(v, ret);
+}
+
+int bitsft_exp(TokenPtrV &v, int idx) {
+
+    int ret = add_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || 
+        v[ret]->getType() != Token::LeftShift || 
+        v[ret]->getType() != Token::RightShift) {
+        return ret;
+    }
+
+    ret++;
+
+    return bitsft_exp(v, ret);
+}
+
+int add_exp(TokenPtrV &v, int idx) {
+
+    int ret = mult_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || 
+        v[ret]->getType() != Token::Plus || 
+        v[ret]->getType() != Token::Minus) {
+        return ret;
+    }
+
+    ret++;
+
+    return add_exp(v, ret);
+}
+
+int mult_exp(TokenPtrV &v, int idx) {
+
+    int ret = prim_exp(v, idx);
+    if (ret < 0) 
+        return -1;
+    
+    if (v.size() <= ret || 
+        v[ret]->getType() != Token::Star || 
+        v[ret]->getType() != Token::Slash ||
+        v[ret]->getType() != Token::Mod) {
+        return ret;
+    }
+
+    ret++;
+
+    return mult_exp(v, ret);
+}

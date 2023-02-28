@@ -3,7 +3,7 @@
 
 using namespace Match;
 
-int CodeLines(TokenPtrV &v, int idx);
+    int CodeLines(TokenPtrV &v, int idx);
     int CodeBlock(TokenPtrV &v, int idx);
     int Statement(TokenPtrV &v, int idx);
     int SimpleStmt(TokenPtrV &v, int idx);
@@ -37,7 +37,7 @@ int CodeLines(TokenPtrV &v, int idx);
 
 
 
-int Start(TokenPtrV &v, int idx) {
+int Match::Start(TokenPtrV &v, int idx) {
     return CodeLines(v, idx);
 }
 

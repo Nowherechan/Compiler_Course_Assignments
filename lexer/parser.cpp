@@ -1,4 +1,5 @@
 #include <vector>
+#include <iostream>
 #include "parser.h"
 
 using namespace Match;
@@ -49,26 +50,26 @@ int CodeBlock(TokenPtrV &v, int idx) {
         return -1;
     ret++;
     ret = CodeLines(v, ret);
-    if (v.size() <= ret || v[ret]->getType() != Token::LeftBrace)
+    if (v.size() <= ret || v[ret]->getType() != Token::RightBrace)
         return -1;
     ret++;
     return ret;
 }
 
 int CodeLines(TokenPtrV &v, int idx) {
-    
+
     int ret = idx; 
+    if (v.size() <= ret)
+        return ret;
+
     if (v.size() > ret)
         ret = Statement(v, ret);
     if (ret < 0) 
         return ret;
     
     // always success
-    int new_ret = ret;
-    while (new_ret > 0) {
-        ret = new_ret;
-        new_ret = CodeLines(v, new_ret);
-    }
+    int new_ret = CodeLines(v, ret);
+    ret = new_ret > ret ? new_ret : ret;
 
     return ret;
 }
@@ -160,7 +161,11 @@ int ReturnStmt(TokenPtrV &v, int idx) {
     }
     ret++;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Return) {
+    ret = expression(v, ret);
+    if (ret < 0) 
+        return -1;
+
+    if (v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
         return -1;
     }
     ret++;
@@ -312,8 +317,8 @@ int Arglist(TokenPtrV &v, int idx) {
     int ret = idx;
 
     if (v.size() <= ret || v[ret]->getType() != Token::Qualifier) {
-        return -1;
-    }
+        return ret;
+    } // Might be empty
     ret++;
 
     if (v.size() <= ret || v[ret]->getType() != Token::Id) {
@@ -322,9 +327,13 @@ int Arglist(TokenPtrV &v, int idx) {
     ret++;
 
     // comma following
-    if (v.size() > ret && v[ret]->getType() == Token::Comma) {
-        return Arglist(v, ret);
+    if (v.size() <= ret || v[ret]->getType() != Token::Comma) {
+        return ret;
     }
+    ret++;
+
+    int new_ret = Arglist(v, ret);
+    ret = new_ret > ret ? new_ret : ret;
 
     return ret;
 }
@@ -378,7 +387,7 @@ int prim_exp(TokenPtrV &v, int idx) {
         ret++;
         return ret;
     } else {
-        return -1;
+        return ret;
     }
 }
 
@@ -390,12 +399,14 @@ int expr_list(TokenPtrV &v, int idx) {
     if (ret < 0) 
         return -1;
 
-    // always match
-    int new_ret = ret;
-    while (new_ret >= 0) {
-        ret = new_ret;
-        new_ret = expr_list(v, ret);
+    if (v.size() <= ret || v[ret]->getType() != Token::Comma) {
+        return ret;
     }
+    ret++;
+
+    // always match
+    int new_ret = expr_list(v, ret);
+    ret = new_ret > ret ? new_ret : ret;
 
     return ret;
 }
@@ -477,7 +488,7 @@ int neg_exp(TokenPtrV &v, int idx) {
         return neg_exp(v, ret+1);
     }
 
-    return relop_exp(v, ret+1);
+    return relop_exp(v, ret);
 }
 
 int relop_exp(TokenPtrV &v, int idx) {
@@ -547,8 +558,8 @@ int bitsft_exp(TokenPtrV &v, int idx) {
         return -1;
     
     if (v.size() <= ret || 
-        v[ret]->getType() != Token::LeftShift || 
-        v[ret]->getType() != Token::RightShift) {
+        (v[ret]->getType() != Token::LeftShift && 
+         v[ret]->getType() != Token::RightShift)) {
         return ret;
     }
 
@@ -564,8 +575,8 @@ int add_exp(TokenPtrV &v, int idx) {
         return -1;
     
     if (v.size() <= ret || 
-        v[ret]->getType() != Token::Plus || 
-        v[ret]->getType() != Token::Minus) {
+        (v[ret]->getType() != Token::Plus && 
+         v[ret]->getType() != Token::Minus)) {
         return ret;
     }
 
@@ -581,9 +592,9 @@ int mult_exp(TokenPtrV &v, int idx) {
         return -1;
     
     if (v.size() <= ret || 
-        v[ret]->getType() != Token::Star || 
-        v[ret]->getType() != Token::Slash ||
-        v[ret]->getType() != Token::Mod) {
+        (v[ret]->getType() != Token::Star &&
+         v[ret]->getType() != Token::Slash &&
+         v[ret]->getType() != Token::Mod)) {
         return ret;
     }
 

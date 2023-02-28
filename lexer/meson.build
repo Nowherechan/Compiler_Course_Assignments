@@ -10,5 +10,6 @@ executable('lexer',
            'showtokens.cpp',
            'lexer_dfa.cpp',
            'Token.cpp',
+           'parser.cpp',
            install : false,
            include_directories : incdir)

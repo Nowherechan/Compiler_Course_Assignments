@@ -37,7 +37,7 @@ static std::map<RelopType, Token::RelopType> RelopToTokenRelopType = {
 static std::map<std::string, Token::TokenType> KeyWordTable = {
     {"return", Token::Return}, {"for", Token::For},
     {"break", Token::Break}, {"if", Token::If},
-    {"else", Token::Else}, {"while", Token::Else},
+    {"else", Token::Else},
     {"while", Token::While}, {"continue", Token::Continue}
 };
 static std::map<std::string, Token::QualifierType> QualifierTable = {

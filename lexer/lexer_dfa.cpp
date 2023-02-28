@@ -24,7 +24,7 @@ static std::map<enum SignType, enum Token::TokenType> SignToTokenTable = {
     {s_Mod, Token::Mod}, 
     {s_And, Token::And}, {s_bitAnd, Token::BitAnd}, {s_Or, Token::Or}, {s_bitOr, Token::BitOr},
     {s_Xor, Token::Xor}, {s_bitNeg, Token::Neg}, {s_LeftShift, Token::LeftShift}, {s_RightShift, Token::RightShift},
-    {s_LeftParen, Token::LeftParen}, {s_RightParen, Token::RightParen},
+    {s_LeftParen, Token::LeftParen}, {s_RightParen, Token::RightParen}, {s_Dot, Token::Dot},
     {s_LeftSqBracket, Token::LeftSqBracket}, {s_RightSqBracket, Token::RightSqBracket},
     {s_LeftBrace, Token::LeftBrace}, {s_RightBrace, Token::RightBrace}, {s_Comma, Token::Comma}, {s_Semicolon, Token::Semicolon}
 };

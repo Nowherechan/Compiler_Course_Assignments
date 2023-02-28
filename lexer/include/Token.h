@@ -32,6 +32,7 @@ enum TokenType {
     RightShift,
     Star,
     Slash,
+    Dot,
 
     IntegerConstant,
     DoubleConstant,

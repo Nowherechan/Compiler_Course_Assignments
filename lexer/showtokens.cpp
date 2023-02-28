@@ -39,6 +39,7 @@ std::map<Token::TokenType, std::string> type_table = {
     {RightSqBracket, "\']\'"},
     {LeftBrace, "\'{\'"},
     {RightBrace, "\'}\'"},
+    {Dot, "."},
     {Relop, "Relop"}
 };
 

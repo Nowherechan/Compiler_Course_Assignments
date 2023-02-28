@@ -40,7 +40,7 @@ while_stmt ::= While "(" expression ")" codeblock
 ### Function Define Statement
 ```ebnf
 funcdef_stmt ::= Qualifier Identifier "(" arg_list ")" codeblock
-arg_list ::= Identifier {, arg_list}
+arg_list ::= Qualifier Identifier {, arg_list}
 ```
 
 ## Expressions
@@ -61,7 +61,7 @@ expr_list ::= expression {"," expr_list}
 ### Atom
 ```ebnf
 atom ::= Identifier | const | "(" expression ")"
-const ::= IntConst | DoubleConste
+const ::= IntConst | DoubleConst
 ```
 > Priority: func() > *, /, % > +, - > ">>", "<<" > & > ^ > | > relop > ! > && > ||
 

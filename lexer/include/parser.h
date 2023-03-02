@@ -8,7 +8,7 @@ typedef std::vector<Token::Token*> TokenPtrV;
 
 namespace Match {
     int Start(TokenPtrV &v, int idx);
-    
+    int getMaxRet();
 };
 
 #endif

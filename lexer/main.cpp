@@ -10,6 +10,7 @@ int main() {
     TokenPtrV &v = get_tokenlist_ref();
     showTokenList(v);
     std::cout << "Match:\t" << Match::Start(v, 0) << std::endl;
+    std::cout << "MaxRet:\t" << Match::getMaxRet() << std::endl;
     std::cout << "All:\t" << v.size() << std::endl;
     return 0;
 }

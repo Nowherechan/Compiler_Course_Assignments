@@ -4,6 +4,8 @@
 
 using namespace Match;
 
+static int max_ret = 0;
+
     int CodeLines(TokenPtrV &v, int idx);
     int CodeBlock(TokenPtrV &v, int idx);
     int Statement(TokenPtrV &v, int idx);
@@ -42,15 +44,21 @@ int Match::Start(TokenPtrV &v, int idx) {
     return CodeLines(v, idx);
 }
 
+int Match::getMaxRet() {
+    return max_ret;
+}
+
 int CodeBlock(TokenPtrV &v, int idx) {
+
+    max_ret = max_ret > idx ? max_ret : idx;
 
     int ret = idx;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::LeftBrace)
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::LeftBrace)
         return -1;
     ret++;
     ret = CodeLines(v, ret);
-    if (v.size() <= ret || v[ret]->getType() != Token::RightBrace)
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::RightBrace)
         return -1;
     ret++;
     return ret;
@@ -58,11 +66,13 @@ int CodeBlock(TokenPtrV &v, int idx) {
 
 int CodeLines(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx; 
-    if (v.size() <= ret)
+    if ((int)v.size() <= ret)
         return ret;
 
-    if (v.size() > ret)
+    if ((int)v.size() > ret)
         ret = Statement(v, ret);
     if (ret < 0) 
         return ret;
@@ -75,7 +85,9 @@ int CodeLines(TokenPtrV &v, int idx) {
 }
 
 int Statement(TokenPtrV &v, int idx) {
-    
+
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
 
     ret = SimpleStmt(v, idx);
@@ -98,6 +110,8 @@ int Statement(TokenPtrV &v, int idx) {
 }
 
 int SimpleStmt(TokenPtrV &v, int idx) {
+
+    max_ret = max_ret > idx ? max_ret : idx;
 
     int ret = idx;
 
@@ -122,12 +136,14 @@ int SimpleStmt(TokenPtrV &v, int idx) {
 
 int ExpressionStmt(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = expression(v, idx);
 
     if (ret < 0)
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
         return -1;
     }
     ret++;
@@ -137,14 +153,16 @@ int ExpressionStmt(TokenPtrV &v, int idx) {
 
 int ContinueStmt(TokenPtrV &v, int idx) {
     
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::Continue) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Continue) {
         return -1;
     }
     ret++;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
         return -1;
     }
     ret++;
@@ -154,9 +172,11 @@ int ContinueStmt(TokenPtrV &v, int idx) {
 
 int ReturnStmt(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::Return) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Return) {
         return -1;
     }
     ret++;
@@ -165,7 +185,7 @@ int ReturnStmt(TokenPtrV &v, int idx) {
     if (ret < 0) 
         return -1;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
         return -1;
     }
     ret++;
@@ -175,25 +195,27 @@ int ReturnStmt(TokenPtrV &v, int idx) {
 
 int DeclareStmt(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Qualifier) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Qualifier) {
         return -1;
     }
     ret++;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Id) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Id) {
         return -1;
     }
     ret++;
 
     // end with ';'
-    if (v.size() > ret && v[ret]->getType() == Token::Semicolon) {
+    if ((int)v.size() > ret && v[ret]->getType() == Token::Semicolon) {
         return ret+1;
     }
     
     // not ';'
-    if (v.size() <= ret || v[ret]->getType() != Token::Relop) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Relop) {
         return -1;
     }
 
@@ -209,7 +231,7 @@ int DeclareStmt(TokenPtrV &v, int idx) {
     if (ret < 0)
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Semicolon) {
         return -1;
     }
     ret++;
@@ -219,14 +241,16 @@ int DeclareStmt(TokenPtrV &v, int idx) {
 
 int IfStmt(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::If) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::If) {
         return -1;
     }
     ret++;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::LeftParen) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::LeftParen) {
         return -1;
     }
     ret++;
@@ -235,7 +259,7 @@ int IfStmt(TokenPtrV &v, int idx) {
     if (ret < 0) 
         return -1;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::RightParen) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::RightParen) {
         return -1;
     }
     ret++;
@@ -245,7 +269,7 @@ int IfStmt(TokenPtrV &v, int idx) {
         return -1;
 
     // there is no 'else'
-    if (v.size() <= ret || v[ret]->getType() != Token::Else) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Else) {
         return ret;
     }
     ret++;
@@ -257,14 +281,16 @@ int IfStmt(TokenPtrV &v, int idx) {
 
 int WhileStmt(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::While) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::While) {
         return -1;
     }
     ret++;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::LeftParen) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::LeftParen) {
         return -1;
     }
     ret++;
@@ -273,7 +299,7 @@ int WhileStmt(TokenPtrV &v, int idx) {
     if (ret < 0) 
         return -1;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::RightParen) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::RightParen) {
         return -1;
     }
     ret++;
@@ -283,19 +309,21 @@ int WhileStmt(TokenPtrV &v, int idx) {
 
 int FuncdefStmt(TokenPtrV &v, int idx) {
     
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Qualifier) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Qualifier) {
         return -1;
     }
     ret++;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Id) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Id) {
         return -1;
     }
     ret++;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::LeftParen) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::LeftParen) {
         return -1;
     }
     ret++;
@@ -304,7 +332,7 @@ int FuncdefStmt(TokenPtrV &v, int idx) {
     if (ret < 0) 
         return -1;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::RightParen) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::RightParen) {
         return -1;
     }
     ret++;
@@ -314,20 +342,22 @@ int FuncdefStmt(TokenPtrV &v, int idx) {
 
 int Arglist(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Qualifier) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Qualifier) {
         return ret;
     } // Might be empty
     ret++;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Id) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Id) {
         return -1;
     }
     ret++;
 
     // comma following
-    if (v.size() <= ret || v[ret]->getType() != Token::Comma) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Comma) {
         return ret;
     }
     ret++;
@@ -342,6 +372,8 @@ int Arglist(TokenPtrV &v, int idx) {
 
 int prim_exp(TokenPtrV &v, int idx) {
     
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
     
     ret = atom(v, ret);
@@ -349,17 +381,17 @@ int prim_exp(TokenPtrV &v, int idx) {
         return -1;
     }
 
-    if (v.size() < ret) {
+    if ((int)v.size() < ret) {
         return -1;
     }
 
-    if (v.size() == ret) {
+    if ((int)v.size() == ret) {
         return ret;
     }
 
     if (v[ret]->getType() == Token::Dot) {
         ret++;
-        if (v.size() <= ret || v[ret]->getType() != Token::Id) {
+        if ((int)v.size() <= ret || v[ret]->getType() != Token::Id) {
             return -1;
         }
         ret++;
@@ -370,7 +402,7 @@ int prim_exp(TokenPtrV &v, int idx) {
         ret = expr_list(v, ret);
         if (ret < 0) 
             return -1;
-        if (v.size() <= ret || v[ret]->getType() != Token::RightParen) {
+        if ((int)v.size() <= ret || v[ret]->getType() != Token::RightParen) {
             return -1;
         }
         ret++;
@@ -381,7 +413,7 @@ int prim_exp(TokenPtrV &v, int idx) {
         ret = expression(v, ret);
         if (ret < 0) 
             return -1;
-        if (v.size() <= ret || v[ret]->getType() != Token::RightSqBracket) {
+        if ((int)v.size() <= ret || v[ret]->getType() != Token::RightSqBracket) {
             return -1;
         }
         ret++;
@@ -393,13 +425,15 @@ int prim_exp(TokenPtrV &v, int idx) {
 
 int expr_list(TokenPtrV &v, int idx) {
     
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
 
     ret = expression(v, ret);
     if (ret < 0) 
         return -1;
 
-    if (v.size() <= ret || v[ret]->getType() != Token::Comma) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Comma) {
         return ret;
     }
     ret++;
@@ -413,9 +447,11 @@ int expr_list(TokenPtrV &v, int idx) {
     
 int atom(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = idx;
 
-    if (v.size() <= ret) 
+    if ((int)v.size() <= ret) 
         return -1;
     
     if (v[ret]->getType() == Token::Id ||
@@ -434,7 +470,7 @@ int atom(TokenPtrV &v, int idx) {
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::RightParen) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::RightParen) {
         return -1;
     }
     ret++;
@@ -449,11 +485,13 @@ int expression(TokenPtrV &v, int idx) {
 
 int or_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = and_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::Or) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Or) {
         return ret;
     }
 
@@ -464,11 +502,13 @@ int or_exp(TokenPtrV &v, int idx) {
 
 int and_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = neg_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::And) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::And) {
         return ret;
     }
 
@@ -479,7 +519,9 @@ int and_exp(TokenPtrV &v, int idx) {
 
 int neg_exp(TokenPtrV &v, int idx) {
 
-    if (v.size() <= idx) {
+    max_ret = max_ret > idx ? max_ret : idx;
+
+    if ((int)v.size() <= idx) {
         return -1;
     }
 
@@ -493,11 +535,13 @@ int neg_exp(TokenPtrV &v, int idx) {
 
 int relop_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = bitor_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::Relop) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Relop) {
         return ret;
     }
 
@@ -508,11 +552,13 @@ int relop_exp(TokenPtrV &v, int idx) {
 
 int bitor_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = bitxor_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::BitOr) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::BitOr) {
         return ret;
     }
 
@@ -523,11 +569,13 @@ int bitor_exp(TokenPtrV &v, int idx) {
 
 int bitxor_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = bitand_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::Xor) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::Xor) {
         return ret;
     }
 
@@ -538,11 +586,13 @@ int bitxor_exp(TokenPtrV &v, int idx) {
 
 int bitand_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = bitsft_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || v[ret]->getType() != Token::BitAnd) {
+    if ((int)v.size() <= ret || v[ret]->getType() != Token::BitAnd) {
         return ret;
     }
 
@@ -553,11 +603,13 @@ int bitand_exp(TokenPtrV &v, int idx) {
 
 int bitsft_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = add_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || 
+    if ((int)v.size() <= ret || 
         (v[ret]->getType() != Token::LeftShift && 
          v[ret]->getType() != Token::RightShift)) {
         return ret;
@@ -570,11 +622,13 @@ int bitsft_exp(TokenPtrV &v, int idx) {
 
 int add_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = mult_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || 
+    if ((int)v.size() <= ret || 
         (v[ret]->getType() != Token::Plus && 
          v[ret]->getType() != Token::Minus)) {
         return ret;
@@ -587,11 +641,13 @@ int add_exp(TokenPtrV &v, int idx) {
 
 int mult_exp(TokenPtrV &v, int idx) {
 
+    max_ret = max_ret > idx ? max_ret : idx;
+
     int ret = prim_exp(v, idx);
     if (ret < 0) 
         return -1;
     
-    if (v.size() <= ret || 
+    if ((int)v.size() <= ret || 
         (v[ret]->getType() != Token::Star &&
          v[ret]->getType() != Token::Slash &&
          v[ret]->getType() != Token::Mod)) {

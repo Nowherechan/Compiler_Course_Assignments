@@ -9,8 +9,7 @@ int main() {
     preprocess("../testfile");
     TokenPtrV &v = get_tokenlist_ref();
     showTokenList(v);
-    std::cout << "Match:\t" << Match::Start(v, 0) << std::endl;
-    std::cout << "MaxRet:\t" << Match::getMaxRet() << std::endl;
-    std::cout << "All:\t" << v.size() << std::endl;
+    int parser_ret = Match::Start(v, 0);
+    Match::reportResult(v, parser_ret);
     return 0;
 }

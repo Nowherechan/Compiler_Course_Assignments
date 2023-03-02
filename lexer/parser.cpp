@@ -48,6 +48,22 @@ int Match::getMaxRet() {
     return max_ret;
 }
 
+void Match::reportResult(TokenPtrV &v, int ret) {
+    int n = v.size();
+    if (ret == n) {
+        std::cout << "Match Success!" << std::endl;
+        return;
+    }
+
+    if (max_ret == n) {
+        std::cerr << "\033[1m" << "Token "<< max_ret-1 << 
+            ": \033[31merror: \033[0mmatch failed" << std::endl;
+    } else {
+        std::cerr << "\033[1m" << "Token "<< max_ret << 
+            ": \033[31merror: \033[0mmatch failed" << std::endl;
+    }
+}
+
 int CodeBlock(TokenPtrV &v, int idx) {
 
     max_ret = max_ret > idx ? max_ret : idx;

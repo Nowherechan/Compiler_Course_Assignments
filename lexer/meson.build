@@ -4,7 +4,7 @@ project('lexer', 'cpp',
 
 incdir = include_directories('include')
 
-executable('lexer',
+executable('lexer-parser',
            'main.cpp',
            'preprocessor.cpp',
            'showtokens.cpp',
